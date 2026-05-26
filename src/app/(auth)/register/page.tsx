@@ -1,0 +1,136 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Mail, Lock, User, Heart, Sparkles } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+export default function RegisterPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [role, setRole] = useState<'waibao' | 'partner'>('waibao');
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password || !nickname) {
+      toast.error('请填写所有必填项');
+      return;
+    }
+    if (password.length < 6) {
+      toast.error('密码至少6位');
+      return;
+    }
+    setLoading(true);
+    try {
+      const success = await register(email, password, nickname, role);
+      if (success) {
+        toast.success(`欢迎来到歪宝小窝，${nickname}！`);
+        router.push('/');
+      } else {
+        toast.error('注册失败，邮箱可能已被注册');
+      }
+    } catch {
+      toast.error('注册失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-8">
+      {/* 标题 */}
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold text-waibao-text font-cute">创建小窝</h1>
+        <p className="text-waibao-text-light mt-1">开启属于你的温暖旅程</p>
+      </div>
+
+      {/* 角色选择 */}
+      <div className="w-full max-w-sm mb-6">
+        <label className="block text-sm font-medium text-waibao-text ml-1 mb-2">
+          你是谁？
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setRole('waibao')}
+            className={`p-4 rounded-2xl border-2 text-center transition-all duration-200 ${
+              role === 'waibao'
+                ? 'border-waibao-primary bg-waibao-pink-light/50 shadow-colored'
+                : 'border-gray-200 bg-white hover:border-waibao-pink-light'
+            }`}
+          >
+            <Heart className={`w-6 h-6 mx-auto mb-1 ${role === 'waibao' ? 'text-waibao-primary' : 'text-gray-400'}`} />
+            <p className={`font-medium text-sm ${role === 'waibao' ? 'text-waibao-primary' : 'text-gray-500'}`}>
+              我是歪宝
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">被宠爱的小可爱</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole('partner')}
+            className={`p-4 rounded-2xl border-2 text-center transition-all duration-200 ${
+              role === 'partner'
+                ? 'border-waibao-primary bg-waibao-pink-light/50 shadow-colored'
+                : 'border-gray-200 bg-white hover:border-waibao-pink-light'
+            }`}
+          >
+            <Sparkles className={`w-6 h-6 mx-auto mb-1 ${role === 'partner' ? 'text-waibao-primary' : 'text-gray-400'}`} />
+            <p className={`font-medium text-sm ${role === 'partner' ? 'text-waibao-primary' : 'text-gray-500'}`}>
+              我是男朋友
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">宠她的人</p>
+          </button>
+        </div>
+      </div>
+
+      {/* 注册表单 */}
+      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
+        <Input
+          label="昵称"
+          placeholder={role === 'waibao' ? '给歪宝起个可爱的名字' : '你的称呼'}
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          icon={<User className="w-5 h-5" />}
+        />
+
+        <Input
+          label="邮箱"
+          type="email"
+          placeholder="请输入邮箱"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          icon={<Mail className="w-5 h-5" />}
+        />
+
+        <Input
+          label="密码"
+          type="password"
+          placeholder="至少6位密码"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          icon={<Lock className="w-5 h-5" />}
+        />
+
+        <Button type="submit" className="w-full" loading={loading}>
+          注册
+        </Button>
+      </form>
+
+      {/* 登录链接 */}
+      <p className="mt-6 text-sm text-waibao-text-light">
+        已有账号？{' '}
+        <Link href="/login" className="text-waibao-primary font-medium hover:underline">
+          登录
+        </Link>
+      </p>
+    </div>
+  );
+}

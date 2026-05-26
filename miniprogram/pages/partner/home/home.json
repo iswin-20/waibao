@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "另一半今日",
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

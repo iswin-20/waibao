@@ -1,0 +1,134 @@
+<view class="page">
+  <view class="section-header">
+    <view>
+      <text class="section-title">例假日历</text>
+      <text class="section-subtitle">记录周期和身体状态</text>
+    </view>
+    <button class="btn btn-primary btn-small" bindtap="openModal">记录</button>
+  </view>
+
+  <view class="card calendar-card">
+    <view class="calendar-head">
+      <view class="nav-zone nav-zone-left">
+        <view class="nav-btn" data-step="-1" bindtap="changeMonth">‹</view>
+      </view>
+      <text class="month-title">{{monthTitle}}</text>
+      <view class="nav-zone nav-zone-right">
+        <view class="nav-btn" data-step="1" bindtap="changeMonth">›</view>
+      </view>
+      <text class="year-label">{{yearTitle}}</text>
+    </view>
+
+    <view class="week-row">
+      <text wx:for="{{weekDays}}" wx:key="*this" class="week-day">{{item}}</text>
+    </view>
+
+    <view class="calendar-grid">
+      <view wx:for="{{days}}" wx:key="date" class="day-cell {{item.inMonth ? '' : 'day-muted'}} {{item.isToday ? 'day-today' : ''}} {{item.isPeriod ? 'day-period' : ''}}">
+        <text>{{item.day}}</text>
+      </view>
+    </view>
+
+    <view class="legend">
+      <view class="row gap-12">
+        <view class="legend-dot period-dot"></view>
+        <text class="tiny">例假</text>
+      </view>
+      <view class="row gap-12">
+        <view class="legend-dot today-dot"></view>
+        <text class="tiny">今天</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-header">
+      <text class="section-title">下次预测</text>
+      <button class="btn btn-secondary btn-small" loading="{{predictLoading}}" bindtap="loadPredict">预测</button>
+    </view>
+    <view wx:if="{{predict && predict.predictNextDate}}" class="predict-box">
+      <text class="muted">预计下次开始</text>
+      <text class="predict-date">{{predict.nextText}}</text>
+      <text class="tiny">约 {{predict.daysUntil}} 天后，平均周期 {{predict.avgCycleLength}} 天</text>
+    </view>
+    <view wx:else class="empty compact-empty">
+      <text class="empty-title">暂无足够数据</text>
+      <text class="empty-desc">记录几次后，预测会更有参考价值。</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-header">
+      <text class="section-title">最近记录</text>
+      <text class="section-subtitle">{{records.length}} 条</text>
+    </view>
+    <view wx:if="{{records.length === 0}}" class="empty compact-empty">
+      <text class="empty-title">还没有记录</text>
+    </view>
+    <view wx:else class="list">
+      <view wx:for="{{records}}" wx:key="id" class="list-item">
+        <text class="item-title">{{item.startText}}{{item.endText ? ' - ' + item.endText : ''}}</text>
+        <text class="item-desc">疼痛：{{item.painText}} · 情绪：{{item.moodText}} · 流量：{{item.flowText}}</text>
+        <text wx:if="{{item.note}}" class="item-desc">{{item.note}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card tip-card">
+    <text class="item-title">温馨提示</text>
+    <text class="item-desc">本功能用于生活记录和提醒，不作为医疗诊断依据。身体明显不适时，建议及时寻求专业帮助。</text>
+  </view>
+
+  <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal" catchtap="noop">
+      <view class="row-between">
+        <text class="modal-title">记录例假</text>
+        <text class="muted" bindtap="closeModal">关闭</text>
+      </view>
+      <scroll-view class="modal-body" scroll-y>
+        <view class="form-group">
+          <text class="input-label">开始日期</text>
+          <picker mode="date" value="{{form.startDate}}" bindchange="onStartDate">
+            <view class="input picker-value">{{form.startDate || '请选择开始日期'}}</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="input-label">结束日期，可选</text>
+          <picker mode="date" value="{{form.endDate}}" bindchange="onEndDate">
+            <view class="input picker-value">{{form.endDate || '未结束或不填写'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <text class="input-label">疼痛程度</text>
+          <view class="pill-row">
+            <view wx:for="{{painOptions}}" wx:key="value" class="pill {{form.painLevel === item.value ? 'pill-active' : ''}}" data-field="painLevel" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+
+        <view class="form-group">
+          <text class="input-label">情绪</text>
+          <view class="pill-row">
+            <view wx:for="{{moodOptions}}" wx:key="value" class="pill {{form.mood === item.value ? 'pill-active' : ''}}" data-field="mood" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+
+        <view class="form-group">
+          <text class="input-label">流量</text>
+          <view class="pill-row">
+            <view wx:for="{{flowOptions}}" wx:key="value" class="pill {{form.flowLevel === item.value ? 'pill-active' : ''}}" data-field="flowLevel" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+
+        <view class="form-group">
+          <text class="input-label">备注</text>
+          <textarea class="textarea" value="{{form.note}}" placeholder="记录今天的感受..." bindinput="onNoteInput" />
+        </view>
+
+        <button class="btn btn-primary" loading="{{saving}}" bindtap="submit">保存记录</button>
+      </scroll-view>
+    </view>
+  </view>
+
+  <tabbar active="period" />
+</view>

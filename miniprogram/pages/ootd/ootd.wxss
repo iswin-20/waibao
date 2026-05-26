@@ -1,0 +1,212 @@
+.weather-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  background: linear-gradient(135deg, rgba(255, 228, 228, 0.7), rgba(255, 240, 205, 0.56));
+}
+
+.weather-title,
+.weather-desc,
+.item-title,
+.item-desc {
+  display: block;
+}
+
+.weather-title {
+  color: #3f3434;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.weather-desc,
+.item-desc {
+  margin-top: 8rpx;
+  color: #9a8585;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.recommend-btn {
+  width: 168rpx;
+  flex-shrink: 0;
+}
+
+.model-stage {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+
+.model {
+  position: relative;
+  width: 260rpx;
+  height: 520rpx;
+  flex-shrink: 0;
+}
+
+.head {
+  width: 82rpx;
+  height: 82rpx;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #ffe0cf;
+}
+
+.neck {
+  width: 30rpx;
+  height: 26rpx;
+  margin: -2rpx auto 0;
+  background: #ffe0cf;
+}
+
+.body {
+  position: relative;
+  width: 158rpx;
+  height: 184rpx;
+  margin: 0 auto;
+  border-radius: 48rpx 48rpx 30rpx 30rpx;
+  background: #f4e8e3;
+}
+
+.legs {
+  position: relative;
+  width: 152rpx;
+  height: 170rpx;
+  margin: 8rpx auto 0;
+  border-radius: 18rpx 18rpx 44rpx 44rpx;
+  background: #eee3de;
+}
+
+.feet {
+  position: relative;
+  width: 170rpx;
+  height: 54rpx;
+  margin: 8rpx auto 0;
+}
+
+.wear {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.wear-top {
+  top: 4rpx;
+  width: 190rpx;
+  height: 178rpx;
+}
+
+.wear-jacket {
+  top: -4rpx;
+  width: 214rpx;
+  height: 194rpx;
+  z-index: 4;
+}
+
+.wear-bottom {
+  top: -12rpx;
+  width: 188rpx;
+  height: 190rpx;
+}
+
+.wear-shoes {
+  top: 0;
+  width: 188rpx;
+  height: 62rpx;
+}
+
+.selected-note {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  color: #4a3f3f;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.rec-card {
+  background: #fffdf8;
+}
+
+.rec-summary {
+  display: block;
+  margin-top: 14rpx;
+  color: #4a3f3f;
+  font-size: 28rpx;
+  line-height: 1.65;
+}
+
+.tip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-top: 16rpx;
+}
+
+.tip {
+  color: #8a7474;
+  font-size: 24rpx;
+}
+
+.compact-empty {
+  padding: 22rpx 0;
+}
+
+.wardrobe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.cloth-card {
+  min-width: 0;
+  padding: 12rpx;
+  border: 2rpx solid transparent;
+  border-radius: 20rpx;
+  background: rgba(255, 228, 228, 0.24);
+}
+
+.cloth-selected {
+  border-color: #ff8fa3;
+  background: rgba(255, 228, 228, 0.6);
+}
+
+.cloth-img {
+  width: 100%;
+  height: 150rpx;
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.cloth-name {
+  display: block;
+  margin-top: 10rpx;
+  color: #4a3f3f;
+  font-size: 23rpx;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cloth-meta {
+  display: block;
+  margin-top: 4rpx;
+  color: #a59090;
+  font-size: 20rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-img {
+  width: 100%;
+  height: 360rpx;
+  margin-bottom: 24rpx;
+  border-radius: 22rpx;
+  background: #fff;
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "例假",
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

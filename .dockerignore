@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+npm-debug.log
+.env
+.env.local
+.env.production
+public/uploads
+data
+*.db
+*.sqlite
+*.sqlite-journal

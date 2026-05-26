@@ -1,0 +1,29 @@
+{
+  "description": "Waibao mini program",
+  "appid": "touristappid",
+  "projectname": "waibao-miniprogram",
+  "compileType": "miniprogram",
+  "libVersion": "3.6.0",
+  "miniprogramRoot": "miniprogram/",
+  "packOptions": {
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "node_modules"
+      },
+      {
+        "type": "folder",
+        "value": ".next"
+      }
+    ]
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true
+  },
+  "condition": {}
+}

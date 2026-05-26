@@ -1,0 +1,8 @@
+<view class="mini-tabbar safe-bottom">
+  <block wx:for="{{items}}" wx:key="key">
+    <view class="tab-item {{active === item.key ? 'active' : ''}}" data-page="{{item.page}}" bindtap="go">
+      <view class="tab-icon">{{item.icon}}</view>
+      <text class="tab-text">{{item.text}}</text>
+    </view>
+  </block>
+</view>

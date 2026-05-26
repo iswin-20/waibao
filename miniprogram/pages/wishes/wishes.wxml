@@ -1,0 +1,118 @@
+<view class="page">
+  <view class="section-header">
+    <view>
+      <text class="section-title">歪宝的心愿</text>
+      <text class="section-subtitle">把想要的、想去的、想做的都放进来</text>
+    </view>
+    <button class="btn btn-primary btn-small" bindtap="openModal">新增</button>
+  </view>
+
+  <view class="tabs">
+    <view class="tab {{activeTab === 'wanting' ? 'tab-active' : ''}}" data-tab="wanting" bindtap="chooseTab">想要中</view>
+    <view class="tab {{activeTab === 'completed' ? 'tab-active' : ''}}" data-tab="completed" bindtap="chooseTab">已完成</view>
+    <view class="tab {{activeTab === 'wall' ? 'tab-active' : ''}}" data-tab="wall" bindtap="chooseTab">心愿墙</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">
+    <text class="empty-title">加载心愿中...</text>
+  </view>
+
+  <view wx:elif="{{activeTab === 'wanting'}}">
+    <view wx:if="{{wantingWishes.length === 0}}" class="card empty">
+      <text class="empty-title">还没有想要中的心愿</text>
+      <text class="empty-desc">点击“新增”，写下一个小愿望。</text>
+    </view>
+    <view wx:else class="list">
+      <view wx:for="{{wantingWishes}}" wx:key="id" class="card wish-card">
+        <view class="row gap-16">
+          <view class="icon-box">愿</view>
+          <view class="wish-main">
+            <view class="row-between">
+              <text class="item-title">{{item.title}}</text>
+              <text class="badge {{item.badgeClass}}">{{item.categoryText}}</text>
+            </view>
+            <text wx:if="{{item.description}}" class="item-desc">{{item.description}}</text>
+            <view class="progress-line">
+              <view class="progress">
+                <view class="progress-bar" style="width: {{item.progress}}%;"></view>
+              </view>
+              <text class="tiny">{{item.progress}}%</text>
+            </view>
+            <view class="wish-actions">
+              <button class="btn btn-secondary btn-small" data-id="{{item.id}}" bindtap="completeWish">完成</button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{activeTab === 'completed'}}">
+    <view wx:if="{{completedWishes.length === 0}}" class="card empty">
+      <text class="empty-title">还没有完成的心愿</text>
+      <text class="empty-desc">愿望实现后，会出现在这里。</text>
+    </view>
+    <view wx:else class="list">
+      <view wx:for="{{completedWishes}}" wx:key="id" class="card wish-card">
+        <view class="row gap-16">
+          <view class="icon-box done-box">成</view>
+          <view class="wish-main">
+            <view class="row-between">
+              <text class="item-title">{{item.title}}</text>
+              <text class="badge badge-green">已完成</text>
+            </view>
+            <text class="item-desc">{{item.categoryText}} · 进度 {{item.progress}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else>
+    <view wx:if="{{completedWishes.length === 0}}" class="card empty">
+      <text class="empty-title">心愿墙还空着</text>
+      <text class="empty-desc">完成的心愿会成为这里的回忆。</text>
+    </view>
+    <view wx:else class="wall-grid">
+      <view wx:for="{{completedWishes}}" wx:key="id" class="card wall-card">
+        <view class="wall-icon">愿</view>
+        <text class="wall-title">{{item.title}}</text>
+        <text class="badge {{item.badgeClass}}">{{item.categoryText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal" catchtap="noop">
+      <view class="row-between">
+        <text class="modal-title">新增心愿</text>
+        <text class="muted" bindtap="closeModal">关闭</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-group">
+          <text class="input-label">标题</text>
+          <input class="input" value="{{form.title}}" data-field="title" placeholder="写下你的心愿" bindinput="onInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">分类</text>
+          <view class="pill-row">
+            <view wx:for="{{categoryOptions}}" wx:key="value" class="pill {{form.category === item.value ? 'pill-active' : ''}}" data-field="category" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="input-label">优先级</text>
+          <view class="pill-row">
+            <view wx:for="{{priorityOptions}}" wx:key="value" class="pill {{form.priority === item.value ? 'pill-active' : ''}}" data-field="priority" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="input-label">描述，可选</text>
+          <textarea class="textarea" value="{{form.description}}" data-field="description" placeholder="再多写一点细节..." bindinput="onInput" />
+        </view>
+        <button class="btn btn-primary" loading="{{saving}}" bindtap="submit">添加心愿</button>
+      </view>
+    </view>
+  </view>
+
+  <tabbar active="wishes" />
+</view>

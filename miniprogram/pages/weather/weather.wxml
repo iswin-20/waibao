@@ -1,0 +1,93 @@
+<view class="page">
+  <view class="section-header">
+    <view>
+      <text class="section-title">今日天气</text>
+      <text class="section-subtitle">穿衣、护肤和出门提醒</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row gap-12">
+      <input class="city-input" value="{{city}}" placeholder="城市" bindinput="onCityInput" />
+      <button class="btn btn-primary btn-small search-btn" loading="{{loading}}" bindtap="load">刷新</button>
+    </view>
+    <view class="weather-actions">
+      <button class="btn btn-ghost btn-small action-btn" loading="{{locating}}" bindtap="useLocation">当前位置</button>
+      <button class="btn btn-secondary btn-small action-btn" bindtap="goOotd">今日穿搭</button>
+    </view>
+  </view>
+
+  <view wx:if="{{today}}" class="card weather-hero">
+    <view class="row-between">
+      <view>
+        <text class="hero-city">{{displayCity}}</text>
+        <text class="hero-caption">{{heroCaption}}</text>
+      </view>
+      <view class="weather-symbol">{{weatherSymbol}}</view>
+    </view>
+    <view class="temp-row">
+      <text class="temp-max">{{today.tempMax}}</text>
+      <text class="temp-unit">°C</text>
+      <text class="temp-min">/ {{today.tempMin}}°C</text>
+    </view>
+    <text class="hero-weather">{{today.weather}}</text>
+  </view>
+
+  <view wx:if="{{today}}" class="card">
+    <view class="metrics">
+      <view class="metric">
+        <text class="metric-label">降水概率</text>
+        <text class="metric-value">{{rainText}}</text>
+      </view>
+      <view class="metric">
+        <text class="metric-label">风力</text>
+        <text class="metric-value">{{windText}}</text>
+      </view>
+      <view class="metric">
+        <text class="metric-label">湿度</text>
+        <text class="metric-value">{{humidityText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-header">
+      <text class="section-title">未来三天</text>
+    </view>
+    <view wx:if="{{forecast.length === 0}}" class="empty compact-empty">
+      <text class="empty-title">暂时没有预报</text>
+    </view>
+    <view wx:else class="list">
+      <view wx:for="{{forecast}}" wx:key="date" class="list-item row-between">
+        <view>
+          <text class="item-title">{{item.weekday || item.date}}</text>
+          <text class="item-desc">{{item.date}}</text>
+        </view>
+        <view class="forecast-right">
+          <text class="badge">{{item.weather}}</text>
+          <text class="forecast-temp">{{item.tempMax}}°/{{item.tempMin}}°</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-header">
+      <text class="section-title">穿衣建议</text>
+    </view>
+    <text class="advice">{{advice.clothingAdvice || fallbackClothing}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-header">
+      <text class="section-title">护肤建议</text>
+    </view>
+    <text class="advice">{{advice.skincareAdvice || fallbackSkincare}}</text>
+  </view>
+
+  <view class="card note-card">
+    <text class="tiny">{{weatherNote}}</text>
+  </view>
+
+  <tabbar active="weather" />
+</view>

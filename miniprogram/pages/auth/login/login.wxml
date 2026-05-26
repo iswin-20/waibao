@@ -1,0 +1,40 @@
+<view class="auth-page">
+  <view class="brand">
+    <text class="brand-title">歪宝小窝</text>
+    <text class="brand-subtitle">把心情、心愿、纪念日和彼此的照顾都放进一个小小的地方。</text>
+  </view>
+
+  <view class="api-status {{apiOk ? 'api-ok' : 'api-bad'}}" bindtap="checkApi">
+    <text class="status-dot"></text>
+    <view class="status-main">
+      <text class="status-title">{{apiStatus}}</text>
+      <text class="status-url">{{apiBaseUrl}}</text>
+    </view>
+    <text class="status-action">检测</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="input-label">邮箱</text>
+      <input class="input" data-field="email" value="{{email}}" placeholder="请输入邮箱" type="text" bindinput="onInput" />
+    </view>
+    <view class="form-group">
+      <text class="input-label">密码</text>
+      <input class="input" data-field="password" value="{{password}}" placeholder="请输入密码" password bindinput="onInput" />
+    </view>
+    <button class="btn btn-primary {{loading ? 'btn-disabled' : ''}}" loading="{{loading}}" bindtap="submit">登录</button>
+
+    <view class="demo-box">
+      <text class="demo-title">测试账号</text>
+      <view class="demo-actions">
+        <button class="btn btn-ghost btn-small demo-btn" data-role="waibao" bindtap="demoLogin">小歪宝登录</button>
+        <button class="btn btn-secondary btn-small demo-btn" data-role="partner" bindtap="demoLogin">另一半登录</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="auth-switch">
+    <text class="muted">还没有账号？</text>
+    <text class="auth-link" bindtap="goRegister">去注册</text>
+  </view>
+</view>

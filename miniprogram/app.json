@@ -1,0 +1,25 @@
+{
+  "pages": [
+    "pages/auth/login/login",
+    "pages/auth/register/register",
+    "pages/today/today",
+    "pages/weather/weather",
+    "pages/ootd/ootd",
+    "pages/period/period",
+    "pages/wishes/wishes",
+    "pages/profile/profile",
+    "pages/diary/diary",
+    "pages/partner/home/home",
+    "pages/partner/wishes/wishes",
+    "pages/partner/comfort/comfort"
+  ],
+  "window": {
+    "navigationBarTitleText": "歪宝小窝",
+    "navigationBarBackgroundColor": "#fff8f6",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fff8f6",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

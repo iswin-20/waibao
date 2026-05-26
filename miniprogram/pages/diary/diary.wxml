@@ -1,0 +1,47 @@
+<view class="page diary-page">
+  <view class="section-header">
+    <view>
+      <text class="section-title">日记本</text>
+      <text class="section-subtitle">按月份回看自己的心情</text>
+    </view>
+    <button class="btn btn-ghost btn-small" bindtap="back">返回</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">
+    <text class="empty-title">加载日记中...</text>
+  </view>
+
+  <view wx:elif="{{groups.length === 0}}" class="card empty">
+    <text class="empty-title">还没有日记</text>
+    <text class="empty-desc">回到今日页记录第一篇心情。</text>
+  </view>
+
+  <view wx:else class="month-list">
+    <view wx:for="{{groups}}" wx:key="month" class="month-block">
+      <view class="month-title-row">
+        <view class="line"></view>
+        <text class="month-title">{{item.monthText}}</text>
+        <view class="line"></view>
+      </view>
+
+      <view class="list">
+        <view wx:for="{{item.diaries}}" wx:for-item="diary" wx:key="id" class="card diary-card" data-id="{{diary.id}}" bindtap="toggle">
+          <view class="row gap-16">
+            <view class="icon-box">{{diary.moodIcon}}</view>
+            <view class="diary-main">
+              <view class="row gap-12">
+                <text class="item-title">{{diary.dateText}}</text>
+                <text wx:if="{{diary.emotionText}}" class="badge">{{diary.emotionText}}</text>
+              </view>
+              <text class="diary-content">{{diary.expanded ? diary.content : diary.summary}}</text>
+              <view wx:if="{{diary.aiComfortText}}" class="comfort-box">
+                <text class="item-desc">{{diary.expanded ? diary.aiComfortText : diary.aiSummary}}</text>
+              </view>
+              <text class="tiny">{{diary.expanded ? '收起' : '展开全文'}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

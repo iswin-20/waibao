@@ -1,0 +1,149 @@
+.hello-title {
+  color: #3f3434;
+  font-size: 38rpx;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.compact-empty {
+  padding: 18rpx 8rpx;
+}
+
+.inline-btn {
+  display: inline-flex;
+  width: 220rpx;
+  margin: 22rpx auto 0;
+}
+
+.no-margin {
+  margin-bottom: 0;
+}
+
+.love-card {
+  text-align: center;
+}
+
+.love-days {
+  margin-top: 6rpx;
+  color: #f26f8a;
+  font-size: 72rpx;
+  font-weight: 900;
+}
+
+.love-unit {
+  margin-left: 6rpx;
+  color: #9a8585;
+  font-size: 28rpx;
+}
+
+.item-title {
+  display: block;
+  color: #4a3f3f;
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.item-desc {
+  display: block;
+  margin-top: 6rpx;
+  color: #9a8585;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.weather-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6rpx;
+}
+
+.weather-temp {
+  color: #3f3434;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 22rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 228, 228, 0.26);
+}
+
+.todo-check {
+  width: 42rpx;
+  height: 42rpx;
+  border: 4rpx solid #ffd0d7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f26f8a;
+  font-size: 18rpx;
+  flex-shrink: 0;
+}
+
+.todo-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.mood-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.mood-option {
+  flex: 1;
+  min-width: 0;
+  padding: 18rpx 8rpx;
+  border-radius: 20rpx;
+  text-align: center;
+}
+
+.mood-active {
+  background: rgba(255, 228, 228, 0.76);
+  box-shadow: 0 10rpx 24rpx rgba(255, 155, 155, 0.18);
+}
+
+.mood-icon {
+  display: block;
+  width: 52rpx;
+  height: 52rpx;
+  margin: 0 auto 8rpx;
+  border-radius: 18rpx;
+  background: #fff0cd;
+  color: #c27521;
+  font-size: 24rpx;
+  font-weight: 900;
+  line-height: 52rpx;
+}
+
+.mood-label {
+  color: #6f5c5c;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.diary-box,
+.comfort-box {
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 228, 228, 0.34);
+}
+
+.diary-content {
+  display: block;
+  color: #4a3f3f;
+  font-size: 28rpx;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.comfort-box {
+  background: linear-gradient(135deg, rgba(255, 228, 228, 0.55), rgba(255, 240, 205, 0.45));
+}

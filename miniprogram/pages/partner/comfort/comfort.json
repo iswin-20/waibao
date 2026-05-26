@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "哄哄",
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "心愿",
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

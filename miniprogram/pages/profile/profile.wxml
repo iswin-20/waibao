@@ -1,0 +1,172 @@
+<view class="page">
+  <view class="profile-head">
+    <view class="avatar">{{avatarText}}</view>
+    <text class="profile-name">{{user.nickname || '歪宝'}}</text>
+    <text class="badge {{user.role === 'partner' ? 'badge-green' : ''}}">{{user.role === 'partner' ? '另一半' : '小歪宝'}}</text>
+  </view>
+
+  <view class="list">
+    <view class="setting-card" bindtap="openProfile">
+      <view class="icon-box">我</view>
+      <view class="setting-main">
+        <text class="item-title">我的资料</text>
+        <text class="item-desc">{{user.email}}</text>
+      </view>
+      <text class="muted">›</text>
+    </view>
+
+    <view class="setting-card" bindtap="openDates">
+      <view class="icon-box">日</view>
+      <view class="setting-main">
+        <text class="item-title">重要日子</text>
+        <text class="item-desc">{{importantDates.length}} 个日期</text>
+      </view>
+      <text class="muted">›</text>
+    </view>
+
+    <view class="setting-card" bindtap="openCouple">
+      <view class="icon-box">心</view>
+      <view class="setting-main">
+        <text class="item-title">情侣绑定</text>
+        <text class="item-desc">{{coupleText}}</text>
+      </view>
+      <text class="muted">›</text>
+    </view>
+
+    <view class="setting-card soft-setting">
+      <view class="icon-box">隐</view>
+      <view class="setting-main">
+        <text class="item-title">隐私设置</text>
+        <text class="item-desc">小程序版先沿用默认隐私规则</text>
+      </view>
+    </view>
+
+    <view class="setting-card danger-setting" bindtap="logout">
+      <view class="icon-box danger-box">退</view>
+      <view class="setting-main">
+        <text class="item-title danger-text">退出登录</text>
+      </view>
+      <text class="muted">›</text>
+    </view>
+  </view>
+
+  <view wx:if="{{activeModal === 'profile'}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal" catchtap="noop">
+      <view class="row-between">
+        <text class="modal-title">编辑资料</text>
+        <text class="muted" bindtap="closeModal">关闭</text>
+      </view>
+      <scroll-view class="modal-body" scroll-y>
+        <view class="form-group">
+          <text class="input-label">昵称</text>
+          <input class="input" value="{{profileForm.nickname}}" data-field="nickname" bindinput="onProfileInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">生日</text>
+          <picker mode="date" value="{{profileForm.birthday}}" bindchange="onBirthdayChange">
+            <view class="input picker-value">{{profileForm.birthday || '请选择生日'}}</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="input-label">性别</text>
+          <view class="pill-row">
+            <view wx:for="{{genderOptions}}" wx:key="value" class="pill {{profileForm.gender === item.value ? 'pill-active' : ''}}" data-field="gender" data-value="{{item.value}}" bindtap="chooseProfile">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="input-label">恋爱昵称</text>
+          <input class="input" value="{{profileForm.loveNickname}}" data-field="loveNickname" placeholder="另一半对你的称呼" bindinput="onProfileInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">喜欢的相处方式</text>
+          <textarea class="textarea" value="{{profileForm.comfortStyle}}" data-field="comfortStyle" placeholder="你喜欢被怎么照顾" bindinput="onProfileInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">不喜欢的方式</text>
+          <textarea class="textarea" value="{{profileForm.dislikeStyle}}" data-field="dislikeStyle" placeholder="哪些表达会让你不舒服" bindinput="onProfileInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">MBTI</text>
+          <input class="input" value="{{profileForm.mbti}}" data-field="mbti" placeholder="例如 INFP" bindinput="onProfileInput" />
+        </view>
+        <button class="btn btn-primary" loading="{{saving}}" bindtap="saveProfile">保存</button>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view wx:if="{{activeModal === 'dates'}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal" catchtap="noop">
+      <view class="row-between">
+        <text class="modal-title">重要日子</text>
+        <text class="muted" bindtap="closeModal">关闭</text>
+      </view>
+      <scroll-view class="modal-body" scroll-y>
+        <view wx:if="{{importantDates.length === 0}}" class="empty compact-empty">
+          <text class="empty-title">还没有日期</text>
+        </view>
+        <view wx:else class="list date-list">
+          <view wx:for="{{importantDates}}" wx:key="id" class="list-item row-between">
+            <view>
+              <text class="item-title">{{item.title}}</text>
+              <text class="item-desc">{{item.dateText}}</text>
+            </view>
+            <text class="badge">{{item.categoryText}}</text>
+          </view>
+        </view>
+
+        <view class="form-split"></view>
+        <view class="form-group">
+          <text class="input-label">新增标题</text>
+          <input class="input" value="{{dateForm.title}}" data-field="title" placeholder="例如 在一起纪念日" bindinput="onDateInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">日期</text>
+          <picker mode="date" value="{{dateForm.date}}" bindchange="onDateChange">
+            <view class="input picker-value">{{dateForm.date || '请选择日期'}}</view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <text class="input-label">分类</text>
+          <view class="pill-row">
+            <view wx:for="{{dateCategories}}" wx:key="value" class="pill {{dateForm.category === item.value ? 'pill-active' : ''}}" data-value="{{item.value}}" bindtap="chooseDateCategory">{{item.label}}</view>
+          </view>
+        </view>
+        <button class="btn btn-primary" loading="{{saving}}" bindtap="addDate">添加</button>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view wx:if="{{activeModal === 'couple'}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal" catchtap="noop">
+      <view class="row-between">
+        <text class="modal-title">情侣绑定</text>
+        <text class="muted" bindtap="closeModal">关闭</text>
+      </view>
+      <view class="modal-body">
+        <view wx:if="{{couple && couple.status === 'active'}}" class="couple-box">
+          <text class="item-title">已绑定</text>
+          <text class="item-desc">和 {{couple.partner.nickname || '另一半'}} 绑定中</text>
+          <text wx:if="{{couple.loveStartDate}}" class="item-desc">开始于 {{couple.loveStartText}}</text>
+          <button class="btn btn-danger" loading="{{saving}}" bindtap="unbindCouple">解除绑定</button>
+        </view>
+
+        <view wx:elif="{{couple && couple.status === 'pending'}}" class="couple-box">
+          <text class="item-title">等待另一半绑定</text>
+          <view class="bind-code">{{couple.bindCode}}</view>
+          <button class="btn btn-secondary" bindtap="copyBindCode">复制邀请码</button>
+        </view>
+
+        <view wx:else class="couple-box">
+          <text class="item-title">尚未绑定</text>
+          <text class="item-desc">你可以生成邀请码，也可以输入另一半发来的邀请码。</text>
+          <button class="btn btn-primary" loading="{{saving}}" bindtap="createBindCode">生成邀请码</button>
+          <view class="form-split"></view>
+          <input class="input" value="{{bindCode}}" placeholder="输入邀请码" bindinput="onBindCodeInput" />
+          <button class="btn btn-secondary bind-btn" loading="{{saving}}" bindtap="bindCouple">绑定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <tabbar active="profile" />
+</view>

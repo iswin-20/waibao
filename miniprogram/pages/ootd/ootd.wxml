@@ -1,0 +1,107 @@
+<view class="page">
+  <view class="section-header">
+    <view>
+      <text class="section-title">OOTD 穿搭</text>
+      <text class="section-subtitle">上传衣服，按天气自动搭配</text>
+    </view>
+    <button class="btn btn-primary btn-small" loading="{{uploading}}" bindtap="chooseImage">上传</button>
+  </view>
+
+  <view class="card weather-strip" bindtap="loadWeather">
+    <view>
+      <text class="weather-title">{{weatherTitle}}</text>
+      <text class="weather-desc">{{weatherDesc}}</text>
+    </view>
+    <button class="btn btn-secondary btn-small recommend-btn" loading="{{recommending}}" catchtap="recommend">AI 搭配</button>
+  </view>
+
+  <view class="model-stage card">
+    <view class="model">
+      <view class="head"></view>
+      <view class="neck"></view>
+      <view class="body">
+        <image wx:if="{{wornTopSrc}}" class="wear wear-top" src="{{wornTopSrc}}" mode="aspectFit" />
+        <image wx:if="{{wornJacketSrc}}" class="wear wear-jacket" src="{{wornJacketSrc}}" mode="aspectFit" />
+      </view>
+      <view class="legs">
+        <image wx:if="{{wornBottomSrc}}" class="wear wear-bottom" src="{{wornBottomSrc}}" mode="aspectFit" />
+      </view>
+      <view class="feet">
+        <image wx:if="{{wornShoesSrc}}" class="wear wear-shoes" src="{{wornShoesSrc}}" mode="aspectFit" />
+      </view>
+    </view>
+    <view class="selected-note">
+      <text class="item-title">试穿预览</text>
+      <text class="item-desc">点击下方衣服，会放到对应位置。真实试衣会按单品图叠放预览。</text>
+    </view>
+  </view>
+
+  <view wx:if="{{recommendation.summary}}" class="card rec-card">
+    <text class="item-title">AI 推荐</text>
+    <text class="rec-summary">{{recommendation.summary}}</text>
+    <view class="tip-list">
+      <text wx:for="{{recommendation.tips}}" wx:key="*this" class="tip">· {{item}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-header">
+      <text class="section-title">我的衣橱</text>
+      <text class="section-subtitle">{{items.length}} 件</text>
+    </view>
+
+    <view wx:if="{{items.length === 0}}" class="empty compact-empty">
+      <text class="empty-title">衣橱还空着</text>
+      <text class="empty-desc">先上传上衣、裤装、鞋子，AI 就能帮你搭配。</text>
+    </view>
+
+    <view wx:else class="wardrobe-grid">
+      <view wx:for="{{items}}" wx:key="id" class="cloth-card {{item.selected ? 'cloth-selected' : ''}}" data-id="{{item.id}}" bindtap="wearItem">
+        <image class="cloth-img" src="{{item.previewUrl}}" mode="aspectFit" />
+        <text class="cloth-name">{{item.displayName}}</text>
+        <text class="cloth-meta">{{item.metaText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showUpload}}" class="modal-mask" bindtap="closeUpload">
+    <view class="modal" catchtap="noop">
+      <view class="row-between">
+        <text class="modal-title">上传衣服</text>
+        <text class="muted" bindtap="closeUpload">关闭</text>
+      </view>
+      <scroll-view class="modal-body" scroll-y>
+        <image wx:if="{{uploadForm.filePath}}" class="preview-img" src="{{uploadForm.filePath}}" mode="aspectFit" />
+        <view class="form-group">
+          <text class="input-label">名称</text>
+          <input class="input" value="{{uploadForm.name}}" data-field="name" placeholder="例如 白色短袖" bindinput="onFormInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">类型</text>
+          <view class="pill-row">
+            <view wx:for="{{typeOptions}}" wx:key="value" class="pill {{uploadForm.type === item.value ? 'pill-active' : ''}}" data-field="type" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="input-label">颜色</text>
+          <input class="input" value="{{uploadForm.color}}" data-field="color" placeholder="白色 / 黑色 / 蓝色..." bindinput="onFormInput" />
+        </view>
+        <view class="form-group">
+          <text class="input-label">风格</text>
+          <view class="pill-row">
+            <view wx:for="{{styleOptions}}" wx:key="value" class="pill {{uploadForm.style === item.value ? 'pill-active' : ''}}" data-field="style" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="input-label">季节</text>
+          <view class="pill-row">
+            <view wx:for="{{seasonOptions}}" wx:key="value" class="pill {{uploadForm.season === item.value ? 'pill-active' : ''}}" data-field="season" data-value="{{item.value}}" bindtap="chooseForm">{{item.label}}</view>
+          </view>
+        </view>
+        <button class="btn btn-primary" loading="{{uploading}}" bindtap="submitUpload">生成白底图并保存</button>
+      </scroll-view>
+    </view>
+  </view>
+
+  <tabbar active="ootd" />
+</view>

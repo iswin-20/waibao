@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== 用户表 =====
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  nickname      String?
+  avatar        String?
+  birthday      DateTime?
+  gender        String?  // male / female / other
+  role          String   @default("waibao") // waibao / partner
+  mbti          String?
+  loveNickname  String?  // 喜欢的称呼
+  comfortStyle  String?  // 喜欢的安慰方式
+  dislikeStyle  String?  // 不喜欢的表达方式
+
+  emailVerified  Boolean  @default(false)
+  verificationToken String?
+
+  // 关系
+  coupleAsUserA  Couple?      @relation("UserA")
+  coupleAsUserB  Couple?      @relation("UserB")
+  diaries        Diary[]
+  todos          Todo[]
+  wishes         Wish[]
+  wardrobeItems  WardrobeItem[]
+  periodRecords  PeriodRecord[]
+  weatherRecords WeatherRecord[]
+  importantDates ImportantDate[]
+  notifications  Notification[]
+  sentNotifications Notification[] @relation("SentNotification")
+  claimedWishes  Wish[]              @relation("ClaimedWish")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== 情侣绑定表 =====
+model Couple {
+  id           String   @id @default(cuid())
+  userAId      String   @unique
+  userBId      String?  @unique
+  bindCode     String   @unique
+  loveStartDate DateTime?
+  status       String   @default("pending") // pending / active / unbound
+
+  userA User @relation("UserA", fields: [userAId], references: [id])
+  userB User? @relation("UserB", fields: [userBId], references: [id])
+
+  importantDates ImportantDate[]
+  wishes         Wish[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== 重要日期表 =====
+model ImportantDate {
+  id               String   @id @default(cuid())
+  userId           String
+  coupleId         String?
+  title            String
+  date             DateTime
+  repeatType       String   @default("none") // none / yearly
+  remindDaysBefore Int      @default(0)
+  showOnHome       Boolean  @default(true)
+  notifyPartner    Boolean  @default(false)
+  category         String?  // birthday / anniversary / first_meet / first_trip / exam / interview / work / custom
+
+  user   User    @relation(fields: [userId], references: [id])
+  couple Couple? @relation(fields: [coupleId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// ===== 日记表 =====
+model Diary {
+  id            String   @id @default(cuid())
+  userId        String
+  date          DateTime @default(now())
+  content       String
+  moodScore     Int?     // 1-5
+  aiComfortText String?  // AI 安慰文案
+  emotionLevel  Int?     // 0-4 (0:正常 1:轻微 2:明显 3:需要关心 4:强烈)
+  emotionType   String?  // 委屈 / 焦虑 / 生气 / 难过 / 疲惫
+  notifyPartner Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== 天气记录表 =====
+model WeatherRecord {
+  id             String   @id @default(cuid())
+  userId         String
+  city           String?
+  temperature    String?  // "18-25"
+  weather        String?  // 晴 / 多云 / 小雨 / 大雨
+  rainProbability Int?
+  clothingAdvice String?
+  skincareAdvice String?
+  windLevel      String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// ===== 经期记录表 =====
+model PeriodRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  startDate DateTime
+  endDate   DateTime?
+  painLevel String?  // none / mild / moderate / severe
+  mood      String?  // normal / irritable / sad / anxious
+  flowLevel String?  // light / normal / heavy
+  note      String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== 待办表 =====
+model Todo {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  dueDate     DateTime?
+  priority    String    @default("medium") // low / medium / high / urgent
+  completed   Boolean   @default(false)
+  repeatType  String    @default("none") // none / daily / weekly / monthly
+  category    String?   // daily / work / study / health / date / anniversary_prep
+
+  user User @relation(fields: [userId], references: [id])
+
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== 心愿表 =====
+model Wish {
+  id          String   @id @default(cuid())
+  userId      String
+  coupleId    String?
+  title       String
+  description String?
+  imageUrl    String?
+  category    String?  // buy / food / travel / movie / together / surprise / word
+  priority    String   @default("medium") // low / medium / high
+  progress    Int      @default(0) // 0-100
+  status      String   @default("wanting") // wanting / claimed / preparing / completed / archived
+  claimedById String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  couple Couple? @relation(fields: [coupleId], references: [id])
+  claimedBy User? @relation("ClaimedWish", fields: [claimedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== 衣橱表 =====
+model WardrobeItem {
+  id            String   @id @default(cuid())
+  userId        String
+  imageUrl      String
+  whiteImageUrl String?
+  name          String?
+  type          String   // top / jacket / pants / skirt / shoes / bag / accessory
+  color         String?
+  style         String?  // casual / formal / sporty / cute / elegant
+  season        String?  // spring / summer / autumn / winter
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+// ===== 推送通知表 =====
+model Notification {
+  id           String   @id @default(cuid())
+  userId       String   // 接收者
+  senderId     String   // 发送者
+  type         String   // emotion_alert / period_reminder / wish_claimed / date_reminder / comfort
+  title        String
+  content      String
+  read         Boolean  @default(false)
+
+  user   User @relation(fields: [userId], references: [id])
+  sender User @relation("SentNotification", fields: [senderId], references: [id])
+
+  createdAt DateTime @default(now())
+}

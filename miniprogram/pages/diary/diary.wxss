@@ -1,0 +1,66 @@
+.diary-page {
+  padding-bottom: 40rpx;
+}
+
+.month-list {
+  display: flex;
+  flex-direction: column;
+  gap: 26rpx;
+}
+
+.month-title-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-bottom: 18rpx;
+}
+
+.line {
+  flex: 1;
+  height: 1rpx;
+  background: rgba(255, 155, 155, 0.28);
+}
+
+.month-title {
+  color: #9a8585;
+  font-size: 24rpx;
+  font-weight: 900;
+}
+
+.diary-card {
+  margin-bottom: 0;
+}
+
+.diary-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  color: #4a3f3f;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.diary-content {
+  display: block;
+  margin-top: 12rpx;
+  color: #5d4e4e;
+  font-size: 27rpx;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.comfort-box {
+  margin-top: 16rpx;
+  padding: 18rpx;
+  border-radius: 18rpx;
+  background: linear-gradient(135deg, rgba(255, 228, 228, 0.56), rgba(255, 240, 205, 0.44));
+}
+
+.item-desc {
+  display: block;
+  color: #8a7474;
+  font-size: 24rpx;
+  line-height: 1.55;
+}

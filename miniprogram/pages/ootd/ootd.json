@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "今日穿搭",
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

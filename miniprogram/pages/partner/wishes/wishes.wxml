@@ -1,0 +1,42 @@
+<view class="page">
+  <view class="section-header">
+    <view>
+      <text class="section-title">她的心愿</text>
+      <text class="section-subtitle">认领以后慢慢准备惊喜</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">
+    <text class="empty-title">加载心愿中...</text>
+  </view>
+
+  <view wx:elif="{{wishes.length === 0}}" class="card empty">
+    <text class="empty-title">暂时没有可看的心愿</text>
+    <text class="empty-desc">等她添加心愿后，会出现在这里。</text>
+  </view>
+
+  <view wx:else class="list">
+    <view wx:for="{{wishes}}" wx:key="id" class="card wish-card">
+      <view class="row gap-16">
+        <view class="icon-box">愿</view>
+        <view class="wish-main">
+          <view class="row-between">
+            <text class="item-title">{{item.title}}</text>
+            <text class="badge">{{item.categoryText}}</text>
+          </view>
+          <text wx:if="{{item.description}}" class="item-desc">{{item.description}}</text>
+          <view class="progress-line">
+            <view class="progress">
+              <view class="progress-bar" style="width: {{item.progress}}%;"></view>
+            </view>
+            <text class="tiny">{{item.progress}}%</text>
+          </view>
+          <button wx:if="{{item.status === 'wanting'}}" class="btn btn-primary btn-small claim-btn" data-id="{{item.id}}" loading="{{claimingId === item.id}}" bindtap="claimWish">认领心愿</button>
+          <text wx:else class="tiny claim-text">已有人认领或正在准备中</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <tabbar active="partner-wishes" />
+</view>

@@ -1,0 +1,50 @@
+<view class="auth-page">
+  <view class="brand">
+    <text class="brand-title">创建小窝</text>
+    <text class="brand-subtitle">选择自己的身份，之后就可以记录日常、绑定另一半一起使用。</text>
+  </view>
+
+  <view class="api-status {{apiOk ? 'api-ok' : 'api-bad'}}" bindtap="checkApi">
+    <text class="status-dot"></text>
+    <view class="status-main">
+      <text class="status-title">{{apiStatus}}</text>
+      <text class="status-url">{{apiBaseUrl}}</text>
+    </view>
+    <text class="status-action">检测</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="input-label">昵称</text>
+      <input class="input" data-field="nickname" value="{{nickname}}" placeholder="你想被怎么称呼" bindinput="onInput" />
+    </view>
+    <view class="form-group">
+      <text class="input-label">邮箱</text>
+      <input class="input" data-field="email" value="{{email}}" placeholder="请输入邮箱" type="text" bindinput="onInput" />
+    </view>
+    <view class="form-group">
+      <text class="input-label">密码</text>
+      <input class="input" data-field="password" value="{{password}}" placeholder="至少 6 位" password bindinput="onInput" />
+    </view>
+
+    <view class="form-group">
+      <text class="input-label">身份</text>
+      <view class="pill-row">
+        <view class="pill {{role === 'waibao' ? 'pill-active' : ''}}" data-role="waibao" bindtap="chooseRole">小歪宝</view>
+        <view class="pill {{role === 'partner' ? 'pill-active' : ''}}" data-role="partner" bindtap="chooseRole">另一半</view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="input-label">邀请码，可选</text>
+      <input class="input" data-field="bindCode" value="{{bindCode}}" placeholder="另一半发来的邀请码" bindinput="onInput" />
+    </view>
+
+    <button class="btn btn-primary {{loading ? 'btn-disabled' : ''}}" loading="{{loading}}" bindtap="submit">注册并进入</button>
+  </view>
+
+  <view class="auth-switch">
+    <text class="muted">已有账号？</text>
+    <text class="auth-link" bindtap="goLogin">去登录</text>
+  </view>
+</view>

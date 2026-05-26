@@ -1,0 +1,155 @@
+.city-input {
+  flex: 1;
+  min-height: 72rpx;
+  padding: 0 22rpx;
+  border-radius: 999rpx;
+  background: #fff;
+  border: 1rpx solid rgba(255, 155, 155, 0.28);
+}
+
+.search-btn {
+  width: 160rpx;
+}
+
+.weather-actions {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.action-btn {
+  flex: 1;
+}
+
+.weather-hero {
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff8fa3 0%, #ffb36b 100%);
+  color: #fff;
+}
+
+.hero-city {
+  display: block;
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 900;
+}
+
+.hero-caption {
+  display: block;
+  margin-top: 8rpx;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 24rpx;
+}
+
+.weather-symbol {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 900;
+}
+
+.temp-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6rpx;
+  margin-top: 32rpx;
+}
+
+.temp-max {
+  color: #fff;
+  font-size: 92rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.temp-unit {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 34rpx;
+}
+
+.temp-min,
+.hero-weather {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 28rpx;
+}
+
+.hero-weather {
+  display: block;
+  margin-top: 10rpx;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.metric {
+  padding: 22rpx 10rpx;
+  border-radius: 18rpx;
+  background: rgba(255, 228, 228, 0.28);
+  text-align: center;
+}
+
+.metric-label {
+  display: block;
+  color: #9a8585;
+  font-size: 22rpx;
+}
+
+.metric-value {
+  display: block;
+  margin-top: 8rpx;
+  color: #4a3f3f;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.compact-empty {
+  padding: 20rpx 0;
+}
+
+.item-title {
+  display: block;
+  color: #4a3f3f;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.item-desc {
+  display: block;
+  margin-top: 6rpx;
+  color: #9a8585;
+  font-size: 24rpx;
+}
+
+.forecast-right {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.forecast-temp {
+  min-width: 110rpx;
+  text-align: right;
+  color: #4a3f3f;
+  font-weight: 900;
+}
+
+.advice {
+  display: block;
+  color: #5d4e4e;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+.note-card {
+  background: #fff9e8;
+  border-color: #ffe4ae;
+}
