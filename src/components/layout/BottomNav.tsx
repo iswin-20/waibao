@@ -9,12 +9,14 @@ import {
   CloudSun,
   CalendarHeart,
   Wand2,
+  Shirt,
   User,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: '今日', icon: Sun },
   { href: '/weather', label: '天气', icon: CloudSun },
+  { href: '/ootd', label: '穿搭', icon: Shirt },
   { href: '/period', label: '例假', icon: CalendarHeart },
   { href: '/wishes', label: '心愿', icon: Wand2 },
   { href: '/profile', label: '我的', icon: User },
@@ -39,7 +41,7 @@ export function BottomNav() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'nav-item relative px-3 py-1',
+                    'nav-item relative px-2 py-1',
                     isActive && 'active'
                   )}
                 >

@@ -69,13 +69,19 @@ export interface WeatherRecord {
 
 export interface MockWeather {
   city: string;
+  province?: string;
+  district?: string;
+  adcode?: string;
   weather: string;
+  currentTemp?: number;
   tempMin: number;
   tempMax: number;
   rainProbability: number;
   humidity: number;
   windLevel: string;
   uvLevel: string;
+  reportTime?: string;
+  source?: string;
 }
 
 export interface ForecastDay extends MockWeather {
@@ -133,10 +139,13 @@ export interface WardrobeItem {
   id: string;
   userId: string;
   imageUrl: string;
+  whiteImageUrl?: string | null;
+  name?: string | null;
   type: string;
   color: string | null;
   style: string | null;
   season: string | null;
+  createdAt?: string;
 }
 
 // ===== 通知 =====
