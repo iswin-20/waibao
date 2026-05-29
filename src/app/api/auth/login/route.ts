@@ -1,17 +1,18 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { comparePassword, signToken } from '@/lib/auth';
+import { comparePassword, signToken, setTokenCookie } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/api-response';
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return errorResponse('请填写邮箱和密码');
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (!user) {
       return errorResponse('邮箱或密码错误');
     }
@@ -45,13 +46,7 @@ export async function POST(request: NextRequest) {
       token,
     });
 
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60,
-      path: '/',
-    });
+    setTokenCookie(response, token);
 
     return response;
   } catch (error) {

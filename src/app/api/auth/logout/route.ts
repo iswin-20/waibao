@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { clearTokenCookie } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,13 +8,7 @@ export async function POST(request: NextRequest) {
       data: { message: '已退出登录' },
     });
 
-    response.cookies.set('token', '', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 0,
-      path: '/',
-    });
+    clearTokenCookie(response);
 
     return response;
   } catch (error) {

@@ -33,6 +33,19 @@ nano .env.production
 - `JWT_SECRET`
 - `DEEPSEEK_API_KEY`
 - `WEATHER_API_KEY`
+- `COOKIE_SECURE`
+
+你现在如果先用 `http://43.128.155.3:39000` 调试网页和小程序，`COOKIE_SECURE` 要设为：
+
+```env
+COOKIE_SECURE=false
+```
+
+后续换成 HTTPS 域名后，再改成：
+
+```env
+COOKIE_SECURE=true
+```
 
 不要把 `.env.production` 提交到代码仓库。
 

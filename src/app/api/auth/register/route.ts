@@ -1,22 +1,35 @@
 import { NextRequest } from 'next/server';
 import crypto from 'crypto';
 import prisma from '@/lib/prisma';
-import { hashPassword, signToken } from '@/lib/auth';
+import { hashPassword, signToken, setTokenCookie } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/api-response';
+
+const validRoles = new Set(['waibao', 'partner']);
+
+function normalizeEmail(email: unknown): string {
+  return String(email || '').trim().toLowerCase();
+}
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password, nickname, role } = await request.json();
+    const normalizedEmail = normalizeEmail(email);
+    const trimmedNickname = String(nickname || '').trim();
+    const normalizedRole = validRoles.has(role) ? role : 'waibao';
 
-    if (!email || !password || !nickname) {
+    if (!normalizedEmail || !password || !trimmedNickname) {
       return errorResponse('请填写必填信息');
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return errorResponse('请输入正确的邮箱');
     }
 
     if (password.length < 6) {
       return errorResponse('密码至少6位');
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existing) {
       return errorResponse('该邮箱已注册');
     }
@@ -25,10 +38,10 @@ export async function POST(request: NextRequest) {
 
     const user = await prisma.user.create({
       data: {
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
-        nickname,
-        role: role || 'waibao',
+        nickname: trimmedNickname,
+        role: normalizedRole,
         emailVerified: false,
         verificationToken: crypto.randomBytes(32).toString('hex'),
       },
@@ -37,7 +50,7 @@ export async function POST(request: NextRequest) {
     // 异步发送验证邮件，不阻塞注册
     try {
       const { sendVerificationEmail } = await import('@/lib/email');
-      await sendVerificationEmail(email, user.verificationToken!);
+      await sendVerificationEmail(normalizedEmail, user.verificationToken!);
     } catch (e) {
       console.error('验证邮件发送失败（不影响注册）:', e);
     }
@@ -62,13 +75,7 @@ export async function POST(request: NextRequest) {
       token,
     }, 201);
 
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60,
-      path: '/',
-    });
+    setTokenCookie(response, token);
 
     return response;
   } catch (error) {

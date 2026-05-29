@@ -5,6 +5,7 @@ Page({
     nickname: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'waibao',
     bindCode: '',
     loading: false,
@@ -54,30 +55,42 @@ Page({
   },
 
   submit() {
-    const { nickname, email, password, role, bindCode, loading } = this.data;
+    const { nickname, email, password, confirmPassword, role, bindCode, loading } = this.data;
+    const cleanNickname = nickname.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanBindCode = bindCode.trim().toUpperCase();
+
     if (loading) return;
-    if (!nickname.trim() || !email.trim() || !password) {
+    if (!cleanNickname || !cleanEmail || !password) {
       wx.showToast({ title: '请填写昵称、邮箱和密码', icon: 'none' });
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      wx.showToast({ title: '请输入正确的邮箱', icon: 'none' });
       return;
     }
     if (password.length < 6) {
       wx.showToast({ title: '密码至少 6 位', icon: 'none' });
       return;
     }
+    if (password !== confirmPassword) {
+      wx.showToast({ title: '两次输入的密码不一致', icon: 'none' });
+      return;
+    }
 
     this.setData({ loading: true });
     api.register({
-      nickname: nickname.trim(),
-      email: email.trim(),
+      nickname: cleanNickname,
+      email: cleanEmail,
       password,
       role
     })
       .then((data) => {
-        if (bindCode.trim()) {
+        if (cleanBindCode) {
           return api.request({
             url: '/api/couples/bind',
             method: 'POST',
-            data: { bindCode: bindCode.trim().toUpperCase() }
+            data: { bindCode: cleanBindCode }
           }).catch((error) => {
             wx.showToast({ title: error.error || '邀请码绑定失败，可稍后在我的页面绑定', icon: 'none' });
           }).then(() => data);

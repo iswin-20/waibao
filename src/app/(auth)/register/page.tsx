@@ -12,7 +12,9 @@ import toast from 'react-hot-toast';
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
+  const [bindCode, setBindCode] = useState('');
   const [role, setRole] = useState<'waibao' | 'partner'>('waibao');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -24,18 +26,47 @@ export default function RegisterPage() {
       toast.error('请填写所有必填项');
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error('请输入正确的邮箱');
+      return;
+    }
     if (password.length < 6) {
       toast.error('密码至少6位');
       return;
     }
+    if (password !== confirmPassword) {
+      toast.error('两次输入的密码不一致');
+      return;
+    }
     setLoading(true);
     try {
-      const success = await register(email, password, nickname, role);
-      if (success) {
+      const result = await register({
+        email: email.trim(),
+        password,
+        nickname: nickname.trim(),
+        role,
+      });
+
+      if (result.success) {
+        if (bindCode.trim()) {
+          try {
+            const bindRes = await fetch('/api/couples/bind', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bindCode: bindCode.trim().toUpperCase() }),
+            });
+            const bindData = await bindRes.json();
+            if (!bindRes.ok || !bindData.success) {
+              toast.error(bindData.error || '邀请码绑定失败，可稍后在我的页面绑定');
+            }
+          } catch {
+            toast.error('邀请码绑定失败，可稍后在我的页面绑定');
+          }
+        }
         toast.success(`欢迎来到歪宝小窝，${nickname}！`);
         router.push('/');
       } else {
-        toast.error('注册失败，邮箱可能已被注册');
+        toast.error(result.error || '注册失败');
       }
     } catch {
       toast.error('注册失败，请稍后重试');
@@ -117,6 +148,23 @@ export default function RegisterPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           icon={<Lock className="w-5 h-5" />}
+        />
+
+        <Input
+          label="确认密码"
+          type="password"
+          placeholder="再输入一次密码"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          icon={<Lock className="w-5 h-5" />}
+        />
+
+        <Input
+          label="邀请码（可选）"
+          placeholder="另一半发来的邀请码"
+          value={bindCode}
+          onChange={(e) => setBindCode(e.target.value)}
+          icon={<Sparkles className="w-5 h-5" />}
         />
 
         <Button type="submit" className="w-full" loading={loading}>

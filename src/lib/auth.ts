@@ -6,6 +6,12 @@ import type { NextRequest } from 'next/server';
 const JWT_SECRET = process.env.JWT_SECRET || 'waibao-dev-secret';
 const JWT_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || '7d') as SignOptions['expiresIn'];
 
+function shouldUseSecureCookie(): boolean {
+  if (process.env.COOKIE_SECURE === 'true') return true;
+  if (process.env.COOKIE_SECURE === 'false') return false;
+  return process.env.NODE_ENV === 'production';
+}
+
 // ===== JWT Token =====
 export interface JWTPayload {
   userId: string;
@@ -67,7 +73,7 @@ export function getTokenFromCookies(request: NextRequest): string | null {
 export function setTokenCookie(response: NextResponse, token: string) {
   response.cookies.set('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: shouldUseSecureCookie(),
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60, // 7 days
     path: '/',
@@ -77,7 +83,7 @@ export function setTokenCookie(response: NextResponse, token: string) {
 export function clearTokenCookie(response: NextResponse) {
   response.cookies.set('token', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: shouldUseSecureCookie(),
     sameSite: 'lax',
     maxAge: 0,
     path: '/',

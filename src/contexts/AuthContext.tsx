@@ -8,12 +8,39 @@ interface AuthContextType {
   isLoading: boolean;
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, nickname: string, role: string) => Promise<boolean>;
+  register: (payload: RegisterPayload) => Promise<AuthActionResult>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface RegisterPayload {
+  email: string;
+  password: string;
+  nickname: string;
+  role: string;
+}
+
+interface AuthActionResult {
+  success: boolean;
+  error?: string;
+}
+
+function getStoredToken() {
+  if (typeof window === 'undefined') return '';
+  return window.localStorage.getItem('token') || '';
+}
+
+function storeToken(token?: string) {
+  if (typeof window === 'undefined' || !token) return;
+  window.localStorage.setItem('token', token);
+}
+
+function clearStoredToken() {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem('token');
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -21,7 +48,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
+      const token = getStoredToken();
+      const res = await fetch('/api/auth/me', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       if (res.ok) {
         const data = await res.json();
         setUser(data.data);
@@ -48,40 +78,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       const data = await res.json();
       if (data.success) {
+        storeToken(data.data?.token);
         setUser(data.data.user);
         return true;
       }
+      clearStoredToken();
       return false;
     } catch {
+      clearStoredToken();
       return false;
     }
   };
 
-  const register = async (
-    email: string,
-    password: string,
-    nickname: string,
-    role: string
-  ): Promise<boolean> => {
+  const register = async (payload: RegisterPayload): Promise<AuthActionResult> => {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, nickname, role }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.success) {
+        storeToken(data.data?.token);
         setUser(data.data.user);
-        return true;
+        return { success: true };
       }
-      return false;
+      clearStoredToken();
+      return { success: false, error: data.error || '注册失败' };
     } catch {
-      return false;
+      clearStoredToken();
+      return { success: false, error: '注册失败，请稍后重试' };
     }
   };
 
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
+    clearStoredToken();
     setUser(null);
   };
 
