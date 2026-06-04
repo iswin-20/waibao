@@ -70,12 +70,16 @@ export async function POST(request: NextRequest) {
         avatar: user.avatar,
         birthday: user.birthday,
         gender: user.gender,
+        loveNickname: user.loveNickname,
+        comfortStyle: user.comfortStyle,
+        dislikeStyle: user.dislikeStyle,
+        mbti: user.mbti,
         createdAt: user.createdAt.toISOString(),
       },
       token,
     }, 201);
 
-    setTokenCookie(response, token);
+    setTokenCookie(response, token, request);
 
     return response;
   } catch (error) {

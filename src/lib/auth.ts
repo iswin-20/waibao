@@ -6,10 +6,14 @@ import type { NextRequest } from 'next/server';
 const JWT_SECRET = process.env.JWT_SECRET || 'waibao-dev-secret';
 const JWT_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || '7d') as SignOptions['expiresIn'];
 
-function shouldUseSecureCookie(): boolean {
+function shouldUseSecureCookie(request?: NextRequest): boolean {
   if (process.env.COOKIE_SECURE === 'true') return true;
   if (process.env.COOKIE_SECURE === 'false') return false;
-  return process.env.NODE_ENV === 'production';
+
+  const forwardedProto = request?.headers.get('x-forwarded-proto')?.split(',')[0]?.trim();
+  if (forwardedProto) return forwardedProto === 'https';
+
+  return request?.nextUrl.protocol === 'https:';
 }
 
 // ===== JWT Token =====
@@ -70,20 +74,20 @@ export function getTokenFromCookies(request: NextRequest): string | null {
   return request.cookies.get('token')?.value || null;
 }
 
-export function setTokenCookie(response: NextResponse, token: string) {
+export function setTokenCookie(response: NextResponse, token: string, request?: NextRequest) {
   response.cookies.set('token', token, {
     httpOnly: true,
-    secure: shouldUseSecureCookie(),
+    secure: shouldUseSecureCookie(request),
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60, // 7 days
     path: '/',
   });
 }
 
-export function clearTokenCookie(response: NextResponse) {
+export function clearTokenCookie(response: NextResponse, request?: NextRequest) {
   response.cookies.set('token', '', {
     httpOnly: true,
-    secure: shouldUseSecureCookie(),
+    secure: shouldUseSecureCookie(request),
     sameSite: 'lax',
     maxAge: 0,
     path: '/',

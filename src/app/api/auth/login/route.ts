@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       token,
     });
 
-    setTokenCookie(response, token);
+    setTokenCookie(response, token, request);
 
     return response;
   } catch (error) {

@@ -20,6 +20,12 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const router = useRouter();
 
+  const getTokenHeader = (): Record<string, string> => {
+    if (typeof window === 'undefined') return {};
+    const token = window.localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !nickname) {
@@ -52,7 +58,10 @@ export default function RegisterPage() {
           try {
             const bindRes = await fetch('/api/couples/bind', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                ...getTokenHeader(),
+              },
               body: JSON.stringify({ bindCode: bindCode.trim().toUpperCase() }),
             });
             const bindData = await bindRes.json();
@@ -64,7 +73,7 @@ export default function RegisterPage() {
           }
         }
         toast.success(`欢迎来到歪宝小窝，${nickname}！`);
-        router.push('/');
+        router.push(result.user?.role === 'partner' ? '/partner' : '/');
       } else {
         toast.error(result.error || '注册失败');
       }

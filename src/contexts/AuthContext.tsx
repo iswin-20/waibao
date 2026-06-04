@@ -25,6 +25,7 @@ interface RegisterPayload {
 interface AuthActionResult {
   success: boolean;
   error?: string;
+  user?: User;
 }
 
 function getStoredToken() {
@@ -100,8 +101,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (data.success) {
         storeToken(data.data?.token);
-        setUser(data.data.user);
-        return { success: true };
+        const nextUser = data.data.user;
+        setUser(nextUser);
+        return { success: true, user: nextUser };
       }
       clearStoredToken();
       return { success: false, error: data.error || '注册失败' };

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
       data: { message: '已退出登录' },
     });
 
-    clearTokenCookie(response);
+    clearTokenCookie(response, request);
 
     return response;
   } catch (error) {
