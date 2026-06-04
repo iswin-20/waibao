@@ -4,11 +4,14 @@ Page({
   data: {
     nickname: '',
     email: '',
+    emailCode: '',
     password: '',
     confirmPassword: '',
     role: 'waibao',
     bindCode: '',
     loading: false,
+    codeLoading: false,
+    codeSeconds: 0,
     apiOk: false,
     apiStatus: '正在检测后端连接...',
     apiBaseUrl: ''
@@ -22,6 +25,10 @@ Page({
     this.setData({ apiBaseUrl: api.getActiveBaseUrl() });
   },
 
+  onUnload() {
+    if (this.codeTimer) clearInterval(this.codeTimer);
+  },
+
   onInput(event) {
     const field = event.currentTarget.dataset.field;
     this.setData({ [field]: event.detail.value });
@@ -29,6 +36,45 @@ Page({
 
   chooseRole(event) {
     this.setData({ role: event.currentTarget.dataset.role });
+  },
+
+  sendCode() {
+    const cleanEmail = this.data.email.trim().toLowerCase();
+    if (this.data.codeLoading || this.data.codeSeconds > 0) return;
+    if (!cleanEmail) {
+      wx.showToast({ title: '请先填写邮箱', icon: 'none' });
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      wx.showToast({ title: '请输入正确的邮箱', icon: 'none' });
+      return;
+    }
+
+    this.setData({ codeLoading: true });
+    api.request({
+      url: '/api/auth/register-code',
+      method: 'POST',
+      data: { email: cleanEmail },
+      loadingText: '发送中',
+      skipUnauthorizedRedirect: true
+    }).then(() => {
+      wx.showToast({ title: '验证码已发送', icon: 'success' });
+      this.setData({ codeSeconds: 60 });
+      this.codeTimer = setInterval(() => {
+        const next = this.data.codeSeconds - 1;
+        if (next <= 0) {
+          clearInterval(this.codeTimer);
+          this.codeTimer = null;
+          this.setData({ codeSeconds: 0 });
+          return;
+        }
+        this.setData({ codeSeconds: next });
+      }, 1000);
+    }).catch((error) => {
+      wx.showToast({ title: error.error || '验证码发送失败', icon: 'none' });
+    }).finally(() => {
+      this.setData({ codeLoading: false });
+    });
   },
 
   checkApi() {
@@ -55,7 +101,7 @@ Page({
   },
 
   submit() {
-    const { nickname, email, password, confirmPassword, role, bindCode, loading } = this.data;
+    const { nickname, email, emailCode, password, confirmPassword, role, bindCode, loading } = this.data;
     const cleanNickname = nickname.trim();
     const cleanEmail = email.trim().toLowerCase();
     const cleanBindCode = bindCode.trim().toUpperCase();
@@ -73,6 +119,10 @@ Page({
       wx.showToast({ title: '密码至少 6 位', icon: 'none' });
       return;
     }
+    if (!/^\d{6}$/.test(emailCode.trim())) {
+      wx.showToast({ title: '请输入 6 位邮箱验证码', icon: 'none' });
+      return;
+    }
     if (password !== confirmPassword) {
       wx.showToast({ title: '两次输入的密码不一致', icon: 'none' });
       return;
@@ -82,6 +132,7 @@ Page({
     api.register({
       nickname: cleanNickname,
       email: cleanEmail,
+      emailCode: emailCode.trim(),
       password,
       role
     })

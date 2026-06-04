@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import crypto from 'crypto';
 import prisma from '@/lib/prisma';
 import { hashPassword, signToken, setTokenCookie } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/api-response';
@@ -12,10 +11,11 @@ function normalizeEmail(email: unknown): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, nickname, role } = await request.json();
+    const { email, password, nickname, role, emailCode } = await request.json();
     const normalizedEmail = normalizeEmail(email);
     const trimmedNickname = String(nickname || '').trim();
     const normalizedRole = validRoles.has(role) ? role : 'waibao';
+    const normalizedCode = String(emailCode || '').trim();
 
     if (!normalizedEmail || !password || !trimmedNickname) {
       return errorResponse('请填写必填信息');
@@ -29,31 +29,47 @@ export async function POST(request: NextRequest) {
       return errorResponse('密码至少6位');
     }
 
+    if (!/^\d{6}$/.test(normalizedCode)) {
+      return errorResponse('请输入 6 位邮箱验证码');
+    }
+
     const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existing) {
       return errorResponse('该邮箱已注册');
     }
 
+    const verification = await prisma.registerVerificationCode.findFirst({
+      where: {
+        email: normalizedEmail,
+        code: normalizedCode,
+        consumedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!verification) {
+      return errorResponse('验证码错误或已过期');
+    }
+
     const hashedPassword = await hashPassword(password);
 
-    const user = await prisma.user.create({
-      data: {
-        email: normalizedEmail,
-        password: hashedPassword,
-        nickname: trimmedNickname,
-        role: normalizedRole,
-        emailVerified: false,
-        verificationToken: crypto.randomBytes(32).toString('hex'),
-      },
-    });
+    const user = await prisma.$transaction(async (tx) => {
+      await tx.registerVerificationCode.update({
+        where: { id: verification.id },
+        data: { consumedAt: new Date() },
+      });
 
-    // 异步发送验证邮件，不阻塞注册
-    try {
-      const { sendVerificationEmail } = await import('@/lib/email');
-      await sendVerificationEmail(normalizedEmail, user.verificationToken!);
-    } catch (e) {
-      console.error('验证邮件发送失败（不影响注册）:', e);
-    }
+      return tx.user.create({
+        data: {
+          email: normalizedEmail,
+          password: hashedPassword,
+          nickname: trimmedNickname,
+          role: normalizedRole,
+          emailVerified: true,
+          verificationToken: null,
+        },
+      });
+    });
 
     const token = signToken({
       userId: user.id,

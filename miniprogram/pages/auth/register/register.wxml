@@ -23,6 +23,15 @@
       <input class="input" data-field="email" value="{{email}}" placeholder="请输入邮箱" type="text" bindinput="onInput" />
     </view>
     <view class="form-group">
+      <text class="input-label">邮箱验证码</text>
+      <view class="code-row">
+        <input class="input code-input" data-field="emailCode" value="{{emailCode}}" placeholder="6 位数字" type="number" maxlength="6" bindinput="onInput" />
+        <button class="btn btn-secondary code-btn {{codeSeconds > 0 ? 'btn-disabled' : ''}}" loading="{{codeLoading}}" bindtap="sendCode">
+          {{codeSeconds > 0 ? codeSeconds + 's' : '发送'}}
+        </button>
+      </view>
+    </view>
+    <view class="form-group">
       <text class="input-label">密码</text>
       <input class="input" data-field="password" value="{{password}}" placeholder="至少 6 位" password bindinput="onInput" />
     </view>

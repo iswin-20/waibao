@@ -68,3 +68,22 @@
   font-size: 24rpx;
   font-weight: 800;
 }
+
+.code-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.code-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.code-btn {
+  width: 156rpx;
+  min-height: 88rpx;
+  padding: 0 12rpx;
+  flex-shrink: 0;
+  font-size: 24rpx;
+}

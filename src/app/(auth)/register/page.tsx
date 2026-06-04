@@ -11,12 +11,15 @@ import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
+  const [emailCode, setEmailCode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [bindCode, setBindCode] = useState('');
   const [role, setRole] = useState<'waibao' | 'partner'>('waibao');
   const [loading, setLoading] = useState(false);
+  const [codeLoading, setCodeLoading] = useState(false);
+  const [codeCooldown, setCodeCooldown] = useState(0);
   const { register } = useAuth();
   const router = useRouter();
 
@@ -24,6 +27,48 @@ export default function RegisterPage() {
     if (typeof window === 'undefined') return {};
     const token = window.localStorage.getItem('token');
     return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  const startCooldown = () => {
+    setCodeCooldown(60);
+    const timer = window.setInterval(() => {
+      setCodeCooldown((value) => {
+        if (value <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+        return value - 1;
+      });
+    }, 1000);
+  };
+
+  const sendCode = async () => {
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      toast.error('请先填写邮箱');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      toast.error('请输入正确的邮箱');
+      return;
+    }
+
+    setCodeLoading(true);
+    try {
+      const res = await fetch('/api/auth/register-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || '验证码发送失败');
+      toast.success('验证码已发送，请查看邮箱');
+      startCooldown();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : '验证码发送失败');
+    } finally {
+      setCodeLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +85,10 @@ export default function RegisterPage() {
       toast.error('密码至少6位');
       return;
     }
+    if (!/^\d{6}$/.test(emailCode.trim())) {
+      toast.error('请输入 6 位邮箱验证码');
+      return;
+    }
     if (password !== confirmPassword) {
       toast.error('两次输入的密码不一致');
       return;
@@ -48,6 +97,7 @@ export default function RegisterPage() {
     try {
       const result = await register({
         email: email.trim(),
+        emailCode: emailCode.trim(),
         password,
         nickname: nickname.trim(),
         role,
@@ -149,6 +199,26 @@ export default function RegisterPage() {
           onChange={(e) => setEmail(e.target.value)}
           icon={<Mail className="w-5 h-5" />}
         />
+
+        <div className="grid grid-cols-[1fr_auto] items-end gap-2">
+          <Input
+            label="邮箱验证码"
+            placeholder="6 位数字"
+            value={emailCode}
+            onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            icon={<Sparkles className="w-5 h-5" />}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            className="h-[50px] px-4 whitespace-nowrap"
+            loading={codeLoading}
+            disabled={codeCooldown > 0}
+            onClick={sendCode}
+          >
+            {codeCooldown > 0 ? `${codeCooldown}s` : '发送'}
+          </Button>
+        </div>
 
         <Input
           label="密码"

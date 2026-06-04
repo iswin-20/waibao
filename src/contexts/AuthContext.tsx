@@ -17,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface RegisterPayload {
   email: string;
+  emailCode: string;
   password: string;
   nickname: string;
   role: string;
