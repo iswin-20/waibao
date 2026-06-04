@@ -34,6 +34,8 @@ nano .env.production
 - `DEEPSEEK_API_KEY`
 - `WEATHER_API_KEY`
 - `COOKIE_SECURE`
+- `SMTP_USER`
+- `SMTP_PASS`
 
 你现在如果先用 `http://43.128.155.3:39000` 调试网页和小程序，`COOKIE_SECURE` 要设为：
 
@@ -48,6 +50,18 @@ COOKIE_SECURE=true
 ```
 
 不要把 `.env.production` 提交到代码仓库。
+
+如果使用 Gmail 发注册验证码，配置类似：
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your-gmail@gmail.com
+SMTP_PASS=your-gmail-app-password
+APP_URL=http://43.128.155.3:39000
+```
+
+`SMTP_PASS` 必须是 Gmail 的“应用专用密码”，不是邮箱登录密码。
 
 高德地图 Web 服务 Key 如果开启了 IP 白名单，需要把服务器公网 IP 加进去：
 
