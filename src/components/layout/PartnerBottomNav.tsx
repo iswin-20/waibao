@@ -8,6 +8,7 @@ import {
   Heart,
   Gift,
   Sparkles,
+  Shirt,
   User,
 } from 'lucide-react';
 
@@ -15,6 +16,7 @@ const navItems = [
   { href: '/partner', label: '今日', icon: Heart },
   { href: '/partner/wishes', label: '心愿', icon: Gift },
   { href: '/partner/comfort', label: '哄哄', icon: Sparkles },
+  { href: '/ootd', label: '穿搭', icon: Shirt },
   { href: '/profile', label: '我的', icon: User },
 ];
 

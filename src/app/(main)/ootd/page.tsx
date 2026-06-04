@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ImagePlus, Sparkles, Shirt, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Card, CardHeader, CardTitle, Button, Input } from '@/components/ui';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn, generateMockWeather } from '@/lib/utils';
 import type { MockWeather, WardrobeItem } from '@/types';
 
@@ -62,8 +63,122 @@ function buildWorn(items: WardrobeItem[]) {
   }, {});
 }
 
+function ModelPreview({
+  isPartner,
+  worn,
+}: {
+  isPartner: boolean;
+  worn: Partial<Record<WearSlot, WardrobeItem>>;
+}) {
+  const topSrc = imageOf(worn.top);
+  const jacketSrc = imageOf(worn.jacket);
+  const bottomSrc = imageOf(worn.pants || worn.skirt);
+  const shoesSrc = imageOf(worn.shoes);
+
+  return (
+    <Card className="mb-4">
+      <div className="flex items-center gap-5">
+        <div className="relative h-[280px] w-[150px] shrink-0">
+          {!isPartner && (
+            <div className="absolute left-1/2 top-1 z-0 h-20 w-[68px] -translate-x-1/2 rounded-t-[38px] rounded-b-[30px] bg-[#5b4038]" />
+          )}
+          <div className="absolute left-1/2 top-4 z-20 h-11 w-11 -translate-x-1/2 overflow-hidden rounded-full bg-[#ffe0cf] shadow-sm">
+            <div
+              className={cn(
+                'absolute left-1/2 -translate-x-1/2 bg-[#5b4038]',
+                isPartner
+                  ? '-top-1 h-5 w-12 rounded-b-[16px] rounded-t-[20px]'
+                  : '-top-2 h-7 w-[54px] rounded-b-[20px] rounded-t-[28px]'
+              )}
+            />
+          </div>
+          <div className="absolute left-1/2 top-[58px] z-10 h-7 w-5 -translate-x-1/2 rounded-b-xl bg-[#ffe0cf]" />
+          <div
+            className={cn(
+              'absolute top-[84px] z-0 h-[92px] w-4 rounded-full bg-[#ffe0cf]',
+              isPartner ? 'left-[22px] rotate-[5deg]' : 'left-[34px] rotate-[8deg]'
+            )}
+          />
+          <div
+            className={cn(
+              'absolute top-[84px] z-0 h-[92px] w-4 rounded-full bg-[#ffe0cf]',
+              isPartner ? 'right-[22px] -rotate-[5deg]' : 'right-[34px] -rotate-[8deg]'
+            )}
+          />
+          <div
+            className={cn(
+              'absolute left-1/2 top-[74px] z-20 -translate-x-1/2 bg-[#f4e8e3] shadow-inner',
+              isPartner
+                ? 'h-[104px] w-[92px] rounded-[22px]'
+                : 'h-[102px] w-[78px] rounded-[30px_30px_18px_18px]'
+            )}
+          >
+            {topSrc && (
+              <img
+                src={topSrc}
+                alt=""
+                className={cn(
+                  'absolute left-1/2 top-0 z-30 -translate-x-1/2 object-contain',
+                  isPartner ? 'h-[104px] w-[120px]' : 'h-[100px] w-[104px]'
+                )}
+              />
+            )}
+            {jacketSrc && (
+              <img
+                src={jacketSrc}
+                alt=""
+                className={cn(
+                  'absolute left-1/2 -top-1 z-40 -translate-x-1/2 object-contain',
+                  isPartner ? 'h-[112px] w-[132px]' : 'h-[108px] w-[118px]'
+                )}
+              />
+            )}
+          </div>
+          <div
+            className={cn(
+              'absolute left-1/2 top-[184px] z-10 -translate-x-1/2 bg-[#eee3de] shadow-inner',
+              isPartner ? 'h-[72px] w-[86px] rounded-[14px_14px_28px_28px]' : 'h-[72px] w-[74px] rounded-[14px_14px_30px_30px]'
+            )}
+          >
+            {bottomSrc && (
+              <img
+                src={bottomSrc}
+                alt=""
+                className={cn(
+                  'absolute left-1/2 -top-2 z-30 -translate-x-1/2 object-contain',
+                  isPartner ? 'h-[88px] w-[112px]' : 'h-[86px] w-[100px]'
+                )}
+              />
+            )}
+          </div>
+          <div className="absolute left-1/2 top-[260px] z-20 h-8 w-[96px] -translate-x-1/2">
+            {shoesSrc && (
+              <img
+                src={shoesSrc}
+                alt=""
+                className="absolute left-1/2 top-0 z-30 h-8 w-[102px] -translate-x-1/2 object-contain"
+              />
+            )}
+          </div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <span className="inline-flex h-7 items-center rounded-full bg-waibao-pink-light/55 px-3 text-xs font-bold text-waibao-primary">
+            {isPartner ? '男模特' : '女模特'}
+          </span>
+          <p className="mt-3 font-bold text-waibao-text">试穿预览</p>
+          <p className="mt-2 text-sm leading-relaxed text-waibao-text-light">
+            点击衣橱单品，会按上衣、外套、下装、鞋子放到模特身上。上传时会自动生成白底图保存。
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export default function OotdPage() {
   const router = useRouter();
+  const { user } = useAuth();
+  const isPartner = user?.role === 'partner';
   const [items, setItems] = useState<WardrobeItem[]>([]);
   const [worn, setWorn] = useState<Partial<Record<WearSlot, WardrobeItem>>>({});
   const [weather, setWeather] = useState<MockWeather>(() => generateMockWeather());
@@ -248,38 +363,7 @@ export default function OotdPage() {
         </p>
       </Card>
 
-      <Card className="mb-4">
-        <div className="flex items-center gap-5">
-          <div className="relative h-[260px] w-[130px] shrink-0">
-            <div className="mx-auto h-10 w-10 rounded-full bg-[#ffe0cf]" />
-            <div className="mx-auto h-4 w-4 bg-[#ffe0cf]" />
-            <div className="relative mx-auto h-[92px] w-[78px] rounded-[28px] bg-[#f4e8e3]">
-              {imageOf(worn.top) && (
-                <img src={imageOf(worn.top)} alt="" className="absolute left-1/2 top-0 z-10 h-[90px] w-[96px] -translate-x-1/2 object-contain" />
-              )}
-              {imageOf(worn.jacket) && (
-                <img src={imageOf(worn.jacket)} alt="" className="absolute left-1/2 top-0 z-20 h-[98px] w-[108px] -translate-x-1/2 object-contain" />
-              )}
-            </div>
-            <div className="relative mx-auto mt-1 h-[86px] w-[76px] rounded-[12px] bg-[#eee3de]">
-              {imageOf(worn.pants || worn.skirt) && (
-                <img src={imageOf(worn.pants || worn.skirt)} alt="" className="absolute left-1/2 -top-1 z-10 h-[96px] w-[98px] -translate-x-1/2 object-contain" />
-              )}
-            </div>
-            <div className="relative mx-auto mt-1 h-8 w-[86px]">
-              {imageOf(worn.shoes) && (
-                <img src={imageOf(worn.shoes)} alt="" className="absolute left-1/2 top-0 z-10 h-8 w-[94px] -translate-x-1/2 object-contain" />
-              )}
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-bold text-waibao-text">试穿预览</p>
-            <p className="mt-2 text-sm leading-relaxed text-waibao-text-light">
-              点击衣橱单品，会按上衣、外套、下装、鞋子放到模特身上。上传时会自动生成白底图保存。
-            </p>
-          </div>
-        </div>
-      </Card>
+      <ModelPreview isPartner={isPartner} worn={worn} />
 
       {recommendation.summary && (
         <Card className="mb-4 bg-yellow-50/80">

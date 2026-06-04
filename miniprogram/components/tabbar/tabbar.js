@@ -31,6 +31,7 @@ Component({
             { key: 'partner-home', text: '今日', icon: '今', page: '/pages/partner/home/home' },
             { key: 'partner-wishes', text: '心愿', icon: '愿', page: '/pages/partner/wishes/wishes' },
             { key: 'partner-comfort', text: '哄哄', icon: '哄', page: '/pages/partner/comfort/comfort' },
+            { key: 'ootd', text: '穿搭', icon: '搭', page: '/pages/ootd/ootd' },
             { key: 'profile', text: '我的', icon: '我', page: '/pages/profile/profile' }
           ]
         : [

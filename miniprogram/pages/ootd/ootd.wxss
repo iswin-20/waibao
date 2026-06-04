@@ -45,44 +45,148 @@
   flex-shrink: 0;
 }
 
+.hair-back,
+.hair-front,
 .head {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.hair-back {
+  z-index: 1;
+}
+
+.head {
+  top: 26rpx;
+  z-index: 3;
   width: 82rpx;
   height: 82rpx;
-  margin: 0 auto;
+  overflow: hidden;
   border-radius: 50%;
   background: #ffe0cf;
+  box-shadow: 0 8rpx 22rpx rgba(91, 68, 58, 0.08);
+}
+
+.hair-front {
+  top: -14rpx;
+  z-index: 4;
+  background: #5b4038;
 }
 
 .neck {
+  position: absolute;
+  left: 50%;
+  top: 102rpx;
+  z-index: 2;
+  width: 34rpx;
+  height: 38rpx;
+  transform: translateX(-50%);
+  border-radius: 0 0 14rpx 14rpx;
+  background: #ffe0cf;
+}
+
+.arm {
+  position: absolute;
+  z-index: 1;
   width: 30rpx;
-  height: 26rpx;
-  margin: -2rpx auto 0;
+  height: 168rpx;
+  border-radius: 22rpx;
   background: #ffe0cf;
 }
 
 .body {
   position: relative;
-  width: 158rpx;
-  height: 184rpx;
+  top: 132rpx;
+  z-index: 3;
   margin: 0 auto;
-  border-radius: 48rpx 48rpx 30rpx 30rpx;
   background: #f4e8e3;
+  box-shadow: inset 0 -10rpx 20rpx rgba(139, 104, 92, 0.08);
 }
 
 .legs {
   position: relative;
-  width: 152rpx;
-  height: 170rpx;
-  margin: 8rpx auto 0;
-  border-radius: 18rpx 18rpx 44rpx 44rpx;
+  z-index: 2;
+  margin: 142rpx auto 0;
   background: #eee3de;
+  box-shadow: inset 0 -10rpx 18rpx rgba(139, 104, 92, 0.07);
 }
 
 .feet {
   position: relative;
-  width: 170rpx;
+  z-index: 3;
+  width: 184rpx;
   height: 54rpx;
-  margin: 8rpx auto 0;
+  margin: 10rpx auto 0;
+}
+
+.model-female .hair-back {
+  top: 14rpx;
+  width: 112rpx;
+  height: 142rpx;
+  border-radius: 60rpx 60rpx 48rpx 48rpx;
+  background: #5b4038;
+}
+
+.model-female .hair-front {
+  width: 94rpx;
+  height: 46rpx;
+  border-radius: 50% 50% 44% 44%;
+}
+
+.model-female .arm-left {
+  top: 150rpx;
+  left: 56rpx;
+  transform: rotate(8deg);
+}
+
+.model-female .arm-right {
+  top: 150rpx;
+  right: 56rpx;
+  transform: rotate(-8deg);
+}
+
+.model-female .body {
+  width: 148rpx;
+  height: 184rpx;
+  border-radius: 54rpx 54rpx 34rpx 34rpx;
+}
+
+.model-female .legs {
+  width: 144rpx;
+  height: 162rpx;
+  border-radius: 22rpx 22rpx 50rpx 50rpx;
+}
+
+.model-male .hair-front {
+  top: -8rpx;
+  width: 86rpx;
+  height: 36rpx;
+  border-radius: 38rpx 38rpx 22rpx 22rpx;
+}
+
+.model-male .arm-left {
+  top: 150rpx;
+  left: 42rpx;
+  transform: rotate(5deg);
+}
+
+.model-male .arm-right {
+  top: 150rpx;
+  right: 42rpx;
+  transform: rotate(-5deg);
+}
+
+.model-male .body {
+  width: 172rpx;
+  height: 186rpx;
+  border-radius: 38rpx 38rpx 24rpx 24rpx;
+}
+
+.model-male .legs {
+  width: 164rpx;
+  height: 164rpx;
+  border-radius: 20rpx 20rpx 42rpx 42rpx;
 }
 
 .wear {
@@ -94,13 +198,13 @@
 
 .wear-top {
   top: 4rpx;
-  width: 190rpx;
+  width: 194rpx;
   height: 178rpx;
 }
 
 .wear-jacket {
   top: -4rpx;
-  width: 214rpx;
+  width: 218rpx;
   height: 194rpx;
   z-index: 4;
 }
@@ -115,6 +219,32 @@
   top: 0;
   width: 188rpx;
   height: 62rpx;
+}
+
+.model-male .wear-top {
+  width: 214rpx;
+}
+
+.model-male .wear-jacket {
+  width: 232rpx;
+}
+
+.model-male .wear-bottom {
+  width: 202rpx;
+}
+
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 104rpx;
+  height: 42rpx;
+  margin-bottom: 12rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 143, 163, 0.14);
+  color: #ff7d96;
+  font-size: 22rpx;
+  font-weight: 900;
 }
 
 .selected-note {

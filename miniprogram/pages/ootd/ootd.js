@@ -74,6 +74,16 @@ function weatherView(weather) {
   };
 }
 
+function getModelInfo() {
+  const user = wx.getStorageSync('user') || {};
+  const isPartner = user.role === 'partner';
+  return {
+    modelGender: isPartner ? 'male' : 'female',
+    modelClass: isPartner ? 'model-male' : 'model-female',
+    modelLabel: isPartner ? '男模特' : '女模特',
+  };
+}
+
 Page({
   data: {
     loading: false,
@@ -91,6 +101,9 @@ Page({
     weather: {},
     weatherTitle: '今日天气',
     weatherDesc: '点击刷新天气 · -°/-°',
+    modelGender: 'female',
+    modelClass: 'model-female',
+    modelLabel: '女模特',
     uploadForm: {
       filePath: '',
       name: '',
@@ -126,6 +139,7 @@ Page({
 
   onShow() {
     if (!api.ensureLogin()) return;
+    this.setData(getModelInfo());
     this.loadWardrobe();
     if (!this.data.weather.weather) this.loadWeather();
   },

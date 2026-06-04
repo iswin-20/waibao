@@ -16,9 +16,14 @@
   </view>
 
   <view class="model-stage card">
-    <view class="model">
-      <view class="head"></view>
+    <view class="model {{modelClass}}">
+      <view class="hair-back"></view>
+      <view class="head">
+        <view class="hair-front"></view>
+      </view>
       <view class="neck"></view>
+      <view class="arm arm-left"></view>
+      <view class="arm arm-right"></view>
       <view class="body">
         <image wx:if="{{wornTopSrc}}" class="wear wear-top" src="{{wornTopSrc}}" mode="aspectFit" />
         <image wx:if="{{wornJacketSrc}}" class="wear wear-jacket" src="{{wornJacketSrc}}" mode="aspectFit" />
@@ -31,6 +36,7 @@
       </view>
     </view>
     <view class="selected-note">
+      <text class="model-chip">{{modelLabel}}</text>
       <text class="item-title">试穿预览</text>
       <text class="item-desc">点击下方衣服，会放到对应位置。真实试衣会按单品图叠放预览。</text>
     </view>
